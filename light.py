@@ -7,7 +7,8 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config_entry, async_add_devices):
     """Set up the Godox light from a config entry."""
     mac_address = config_entry.data["mac_address"]
-    device = GodoxInstance(mac_address)
+    uuid = config_entry.data["uuid"]
+    device = GodoxInstance(mac_address, uuid)
     async_add_devices([GodoxLight(device)])
 
 class GodoxLight(LightEntity):
