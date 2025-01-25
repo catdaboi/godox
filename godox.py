@@ -3,32 +3,35 @@ from bleak import BleakClient, BleakScanner
 from crccheck.crc import Crc8Maxim
 import logging
 
-WRITE_UUID = "0000fec7-0000-1000-8000-00805f9b34fb"
+WRITE_UUID_1 = "dad0215c-9754-4264-9174-4736e23ef493"  # Cihaz 1
+WRITE_UUID_2 = "1c466d7c-6b01-4943-9e9f-cd65b6d2b675"  # Cihaz 2
 LOGGER = logging.getLogger(__name__)
 
+# Cihazları keşfet
 async def discover():
-    """Discover Bluetooth LE devices."""
+    """Bluetooth LE cihazlarını keşfedin."""
     devices = await BleakScanner.discover()
-    LOGGER.debug("Discovered devices: %s", [{"address": device.address, "name": device.name} for device in devices])
-    return [device for device in devices if device.name.startswith("GDB5")]
+    LOGGER.debug("Keşfedilen cihazlar: %s", [{"address": device.address, "name": device.name} for device in devices])
+    return [device for device in devices if device.name.startswith("GD_LED")]
 
 class GodoxInstance:
-    def __init__(self, mac: str) -> None:
+    def __init__(self, mac: str, uuid: str) -> None:
         self._mac = mac
+        self._uuid = uuid
         self._device = BleakClient(self._mac)
         self._is_on = None
         self._connected = None
         self._brightness = None
 
     async def _send(self, data: bytearray):
-        LOGGER.debug(''.join(format(x, ' 03x') for x in data))
+        LOGGER.debug(''.join(format(x, '03x') for x in data))
         
-        if (not self._connected):
+        if not self._connected:
             await self.connect()
-        
+
         crcinst = Crc8Maxim()
         crcinst.process(data)
-        await self._device.write_gatt_char(WRITE_UUID, data + crcinst.finalbytes())
+        await self._device.write_gatt_char(self._uuid, data + crcinst.finalbytes())
 
     @property
     def mac(self):
@@ -48,7 +51,6 @@ class GodoxInstance:
         params = bytes.fromhex("380c01")
 
         await self._send(header + command + params)
-
         self._brightness = intensity
 
     async def turn_on(self):
@@ -75,3 +77,22 @@ class GodoxInstance:
     async def disconnect(self):
         if self._device.is_connected:
             await self._device.disconnect()
+
+# Kullanım örneği
+async def main():
+    device_1 = GodoxInstance("A4:C1:38:00:B6:0D", WRITE_UUID_1)  # Cihaz 1
+    device_2 = GodoxInstance("A4:C1:38:2C:CB:00", WRITE_UUID_2)  # Cihaz 2
+
+    # Cihazları aç
+    await device_1.turn_on()
+    await device_2.turn_on()
+
+    # Cihazları brightness ayarlarıyla yönet
+    await device_1.set_brightness(255)
+    await device_2.set_brightness(128)
+
+    # Bağlantıları kes
+    await device_1.disconnect()
+    await device_2.disconnect()
+
+# asyncio.run(main())  # Main fonksiyonu çalıştır
