@@ -36,12 +36,11 @@ def setup_platform(
     # Add devices
     _LOGGER.info(pformat(config))
     
-    light = {
-        "name": config[CONF_NAME],
-        "mac": config[CONF_MAC]
-    }
+    # Cihaz bilgilerini tanımla
+    lights = config.get('lights', [])
     
-    add_entities([GodoxLight(light)])
+    # Godox ışıklarını ekle
+    add_entities([GodoxLight(light) for light in lights])
 
 class GodoxLight(LightEntity):
     """Representation of an Godox Light."""
