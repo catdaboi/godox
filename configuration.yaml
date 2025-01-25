@@ -1,4 +1,7 @@
 light:
   - platform: godox
-    name: "Studio Godox Light"
-    mac: "D8:71:4D:31:09:68"
+    name: "GD Guitar Side"
+    mac: "A4:C1:38:2C:CB:00"
+  - platform: godox
+    name: "GD Router Side"
+    mac: "A4:C1:38:00:B6:0D"
