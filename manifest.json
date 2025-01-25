@@ -1,10 +1,12 @@
 {
   "domain": "godox",
   "name": "Godox TL30 Lights",
+  "version": "0.1.0",
   "requirements": [
     "bleak==0.14.1",
     "crccheck==1.1"
   ],
-  "iot_class": "assumed_state",
-  "version": "0.1.0"
+  "dependencies": ["bluetooth"],
+  "iot_class": "local_push",
+  "config_flow": false,
 }
