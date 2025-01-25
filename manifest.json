@@ -1,6 +1,6 @@
 {
   "domain": "godox",
-  "name": "Godox VL150 Light",
+  "name": "Godox TL30 Lights",
   "requirements": [
     "bleak==0.14.1",
     "crccheck==1.1"
