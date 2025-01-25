@@ -3,11 +3,10 @@ from bleak import BleakClient, BleakScanner
 from crccheck.crc import Crc8Maxim
 import logging
 
-WRITE_UUID_1 = "dad0215c-9754-4264-9174-4736e23ef493"  # Cihaz 1
-WRITE_UUID_2 = "1c466d7c-6b01-4943-9e9f-cd65b6d2b675"  # Cihaz 2
+WRITE_UUID_1 = "dad0215c-9754-4264-9174-4736e23ef493"
+WRITE_UUID_2 = "1c466d7c-6b01-4943-9e9f-cd65b6d2b675"
 LOGGER = logging.getLogger(__name__)
 
-# Cihazları keşfet
 async def discover():
     """Bluetooth LE cihazlarını keşfedin."""
     devices = await BleakScanner.discover()
@@ -78,16 +77,14 @@ class GodoxInstance:
         if self._device.is_connected:
             await self._device.disconnect()
 
-# Kullanım örneği
 async def main():
-    device_1 = GodoxInstance("A4:C1:38:00:B6:0D", WRITE_UUID_1)  # Cihaz 1
-    device_2 = GodoxInstance("A4:C1:38:2C:CB:00", WRITE_UUID_2)  # Cihaz 2
+    device_1 = GodoxInstance("A4:C1:38:00:B6:0D", WRITE_UUID_1)
+    device_2 = GodoxInstance("A4:C1:38:2C:CB:00", WRITE_UUID_2)
 
     # Cihazları aç
     await device_1.turn_on()
     await device_2.turn_on()
 
-    # Cihazları brightness ayarlarıyla yönet
     await device_1.set_brightness(255)
     await device_2.set_brightness(128)
 
@@ -95,4 +92,4 @@ async def main():
     await device_1.disconnect()
     await device_2.disconnect()
 
-# asyncio.run(main())  # Main fonksiyonu çalıştır
+asyncio.run(main())
